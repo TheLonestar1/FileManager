@@ -21,9 +21,8 @@ namespace FileManager.ViewModel
         private string _curretPath = "C:/";
         private string _infoFolderOrFile;
         private IModel _selectedItem;
-         
 
-
+        private string _searchItem;
         public ManagerViewModel()
         {
             drivers = DriveInfo.GetDrives().ToList();
@@ -67,11 +66,56 @@ namespace FileManager.ViewModel
                 
             }
         }
+
+        public string SearchItem
+        {
+            get => _searchItem;
+            set
+            {
+                _searchItem = value;
+                OnPropertyChanged("SearchItem");
+                SearchItems();
+            }
+        }
+        private async void SearchItems()
+        {
+
+            var searchItem = _searchItem;
+            if (string.IsNullOrWhiteSpace(_searchItem))
+            {
+                _searchItem = string.Empty;
+                await GetFilesAndFolder(_curretPath);
+            }
+            else
+            {
+                searchItem = searchItem.ToLowerInvariant();
+
+
+                var ListElements = ElementsOfDirectory.Where(x => x.Name.ToLower().Contains(searchItem)).ToList();
+                ElementsOfDirectory.Clear();
+                ListElements.ForEach(x => ElementsOfDirectory.Add(x));
+
+            }
+        }
+
         private async void OpenFolders(string path)
         {
             _curretPath = path;
-            await GetFilesAndFolder(_curretPath);
+            if(ElementsOfDirectory.Where(x => x.Path == path).First().Type == "Folder")
+                await GetFilesAndFolder(_curretPath);
+            else if (ElementsOfDirectory.Where(x => x.Path == path).First().Type == "File")
+                await OpenFile(path);
         }
+        private async Task<string> OpenFile(string path)
+        {
+            
+
+            System.Diagnostics.Process.Start(path);
+
+            return "Sucsses";
+        }
+
+
         private async Task<string> GetFilesAndFolder(string path)
         {
             List<string> directories = Directory.GetDirectories(path).ToList();
@@ -139,7 +183,8 @@ namespace FileManager.ViewModel
         }
         private async void BackFolder()
         {
-            _curretPath = Directory.GetParent(_curretPath).ToString();
+            if (Directory.GetParent(_curretPath) != null)
+                _curretPath = Directory.GetParent(_curretPath).ToString();
             await GetFilesAndFolder(_curretPath);
         }
 
