@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace FileManager.Model
 {
-    internal interface IModel
+    public interface IModel
     {
+        string Type { get; set; }
         string Path { get; set; }
         string Name { get; set; }
         string Size { get; set; }
