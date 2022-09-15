@@ -13,19 +13,24 @@
 
     <Grid >
 
-        <Grid.RowDefinitions>
+        <Grid.RowDefinitions >
             <RowDefinition Height="49*"/>
             <RowDefinition Height="401*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions >
             <ColumnDefinition Width="99*"/>
             <ColumnDefinition Width="101*"/>
         </Grid.ColumnDefinitions>
 
+        <Grid Grid.Row="0" Background="Aquamarine" Grid.ColumnSpan="2">
+            
+        </Grid>
+        <Grid Grid.Row="1" Background="Aquamarine" Grid.ColumnSpan="2">
 
+        </Grid>
 
-        <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal"
-                    VerticalAlignment="Center">
+        <StackPanel Grid.Column="0"  Grid.Row="0" Orientation="Horizontal"
+                    VerticalAlignment="Center" Background="Aquamarine">
 
             <Button  HorizontalAlignment="Left" Margin="10,0,0,0" Height="24" Width="24"  Command="{Binding BackCommand}">
                 <Button.Template >
@@ -36,10 +41,12 @@
             </Button>
 
             <TextBlock Width="100" Height="24" VerticalAlignment="Top" HorizontalAlignment="Left" Margin = "10 0 0 0">
-                <Border CornerRadius="10" Background="Bisque" BorderBrush="CadetBlue" BorderThickness="1" Margin="5 0 0 0">
+                <Border CornerRadius="10" Background="LightBlue" BorderBrush="CadetBlue" BorderThickness="1" Margin="5 0 0 0">
                    <Grid>
-                       <TextBox VerticalContentAlignment="Center" Height="24" Width="150" TextWrapping="Wrap" Background="Transparent" x:Name="SearchBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                BorderThickness="0" Foreground="Black" Margin="5,0,0,0" Text="{Binding SearchItem, UpdateSourceTrigger=PropertyChanged}"/>
+                       <TextBox VerticalContentAlignment="Center" Height="24" Width="150" TextWrapping="Wrap" 
+                                Background="Transparent" x:Name="SearchBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                BorderThickness="0" Foreground="Black" Margin="5,0,0,0" 
+                                Text="{Binding SearchItem, UpdateSourceTrigger=PropertyChanged}"/>
                        <TextBlock IsHitTestVisible="False"
                                        Text="Search"
                                        VerticalAlignment="Center"
@@ -92,45 +99,48 @@
             </ListView.View>
         </ListView>
 
-        <Label
-            Grid.Column="1"
-            Grid.Row="1"
-            Content="Information"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top" Height="34" Width="254" Margin="0,18,0,0">
-            <Label.Style>
-                <Style TargetType="Label">
-                    <Setter Property="Foreground" Value="Black"/>
-                    <Setter Property="FontFamily" Value="Montserrat"/>
-                    <Setter Property="FontSize" Value="20"/>
-                    <Setter Property="FontWeight" Value="Bold"/>
-                </Style>
-            </Label.Style>
-        </Label>
-
         <Border
             Grid.Column="1"
             Margin="10,47,10,0"
             BorderBrush="#1B4079"
             BorderThickness="1"
-            CornerRadius="10" Grid.RowSpan="2">
+            CornerRadius="10" Grid.RowSpan="2" Background="White" >
 
-            <TextBlock 
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="7*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label
+            Grid.Column="1"
+            Grid.Row="0"
+            Content="Information"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top">
+                    <Label.Style>
+                        <Style TargetType="Label">
+                            <Setter Property="Foreground" Value="Black"/>
+                            <Setter Property="FontFamily" Value="Verdana"/>
+                            <Setter Property="FontSize" Value="20"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                        </Style>
+                    </Label.Style>
+                </Label>
+                <TextBlock 
                     Text="{Binding InformationItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     Foreground="Black"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center" Height="294" Width="360">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="Foreground" Value="Black"/>
-                        <Setter Property="FontFamily" Value="Montserrat"/>
-                        <Setter Property="FontSize" Value="18"/>
-                        <Setter Property="FontWeight" Value="Light"/>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top" Margin="10 0 0 0" Grid.Row="1">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="Black"/>
+                            <Setter Property="FontFamily" Value="Verdana"/>
+                            <Setter Property="FontSize" Value="18"/>
+                            <Setter Property="FontWeight" Value="Light"/>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
         </Border>
-
-
     </Grid>
 </Window>
