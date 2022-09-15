@@ -10,6 +10,8 @@ using System.Collections.ObjectModel;
 using FileManager.Model;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using FileManager.ViewModel.Services;
+using FileManager.DB;
 
 namespace FileManager.ViewModel
 {
@@ -23,11 +25,14 @@ namespace FileManager.ViewModel
         private IModel _selectedItem;
 
         private string _searchItem;
+
+        private DbWorker _dbWorker;
         public ManagerViewModel()
         {
             drivers = DriveInfo.GetDrives().ToList();
             ElementsOfDirectory = new ObservableCollection<IModel>();
             GetFilesAndFolder(_curretPath);
+            _dbWorker = new DbWorker("Records.db");
         }
         private RelayCommand _openFolder;
         public RelayCommand OpenFolder
@@ -108,8 +113,8 @@ namespace FileManager.ViewModel
         }
         private async Task<string> OpenFile(string path)
         {
-            
 
+            _dbWorker.AddRecord(ElementsOfDirectory.Where(x => x.Path == path).First().Name);
             System.Diagnostics.Process.Start(path);
 
             return "Sucsses";
@@ -167,7 +172,7 @@ namespace FileManager.ViewModel
             {
                 InformationItem = $"Type: {_selectedItem.Type} \n" +
                     $"Name : {_selectedItem.Name}\n" +
-                    $"Size: {_selectedItem.Size}\n" +
+                    $"Size: {FolderWorkers.GetSize(new DirectoryInfo(_selectedItem.Path)).Result} МБ\n" +
                     $"Count Files: {ElementsOfDirectory.OfType<Folder>().Where(x => x.Name == _selectedItem.Name).First().CountOfFiles}";
 
             }
