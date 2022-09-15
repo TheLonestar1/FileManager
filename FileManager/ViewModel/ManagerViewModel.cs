@@ -20,20 +20,24 @@ namespace FileManager.ViewModel
         private List<DriveInfo> drivers = new List<DriveInfo>();
         public ObservableCollection<IModel> ElementsOfDirectory { get; set; }
 
-        private string _curretPath = "C:/";
+        private string _curretPath = "";
         private string _infoFolderOrFile;
-        private IModel _selectedItem;
-
         private string _searchItem;
 
+        private IModel _selectedItem;
+
         private DbWorker _dbWorker;
+
         public ManagerViewModel()
         {
-            drivers = DriveInfo.GetDrives().ToList();
+            
             ElementsOfDirectory = new ObservableCollection<IModel>();
-            GetFilesAndFolder(_curretPath);
+            
             _dbWorker = new DbWorker("Records.db");
+
+            GetFilesAndFolder(_curretPath);
         }
+
         private RelayCommand _openFolder;
         public RelayCommand OpenFolder
         {
@@ -42,6 +46,7 @@ namespace FileManager.ViewModel
                 return _openFolder ?? (_openFolder = new RelayCommand(o => OpenFolders(_selectedItem.Path)));
             }
         }
+
         private RelayCommand _backCommand;
         public RelayCommand BackCommand
         {
@@ -52,7 +57,8 @@ namespace FileManager.ViewModel
         }
         public IModel SelectedItem
         {
-            get { return _selectedItem; }
+            get => _selectedItem;
+
             set
             {
                 _selectedItem = value;
@@ -64,6 +70,7 @@ namespace FileManager.ViewModel
         public string InformationItem
         {
             get => _infoFolderOrFile;
+
             set
             {
                 _infoFolderOrFile = value;
@@ -75,6 +82,7 @@ namespace FileManager.ViewModel
         public string SearchItem
         {
             get => _searchItem;
+
             set
             {
                 _searchItem = value;
@@ -86,15 +94,18 @@ namespace FileManager.ViewModel
         {
 
             var searchItem = _searchItem;
+
             if (string.IsNullOrWhiteSpace(_searchItem))
             {
                 _searchItem = string.Empty;
                 await GetFilesAndFolder(_curretPath);
             }
+
             else
             {
                 searchItem = searchItem.ToLowerInvariant();
 
+                await GetFilesAndFolder(_curretPath);
 
                 var ListElements = ElementsOfDirectory.Where(x => x.Name.ToLower().Contains(searchItem)).ToList();
                 ElementsOfDirectory.Clear();
@@ -103,18 +114,38 @@ namespace FileManager.ViewModel
             }
         }
 
+        private void GetDrives()
+        {
+            ElementsOfDirectory.Clear();
+
+            drivers = DriveInfo.GetDrives().ToList();
+            drivers.ForEach(x => ElementsOfDirectory.Add(new Folder {
+                                                                         Icon = "/Images/drives.png",
+                                                                         Path = x.Name,
+                                                                         Name = x.Name,
+                                                                         Type = "Disk"
+            }));
+
+
+        }
+
         private async void OpenFolders(string path)
         {
-            _curretPath = path;
-            if(ElementsOfDirectory.Where(x => x.Path == path).First().Type == "Folder")
+            
+            string typeElement = ElementsOfDirectory.Where(x => x.Path == path).First().Type;
+            if (typeElement == "Folder" || typeElement == "Disk")
+            {
+                _curretPath = path;
                 await GetFilesAndFolder(_curretPath);
-            else if (ElementsOfDirectory.Where(x => x.Path == path).First().Type == "File")
+            }
+            else if (typeElement == "File")
                 await OpenFile(path);
         }
         private async Task<string> OpenFile(string path)
         {
 
             _dbWorker.AddRecord(ElementsOfDirectory.Where(x => x.Path == path).First().Name);
+
             System.Diagnostics.Process.Start(path);
 
             return "Sucsses";
@@ -123,11 +154,20 @@ namespace FileManager.ViewModel
 
         private async Task<string> GetFilesAndFolder(string path)
         {
+            if (string.IsNullOrEmpty(_curretPath))
+            {
+                GetDrives();
+                return "Failed";
+            }
+                
             List<string> directories = Directory.GetDirectories(path).ToList();
             List<string> files = Directory.GetFiles(path).ToList();
+
             ElementsOfDirectory.Clear();
+
             foreach (var directorie in directories)
             {
+
                 try
                 {
                     ElementsOfDirectory.Add(new Folder
@@ -139,14 +179,16 @@ namespace FileManager.ViewModel
                         Type = "Folder"
                     });
                 }
+
                 catch (Exception ex)
                 {
-
+                    Console.WriteLine("Can't open folder : " + ex.Message);
                 }
             }
 
             foreach (var file in files)
             {
+
                 try
                 {
                     ElementsOfDirectory.Add(
@@ -159,11 +201,13 @@ namespace FileManager.ViewModel
                             Type = "File",
                         });
                 }
-                catch
-                {
 
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Can't open file : " + ex.Message);
                 }
             }
+
             return "Sucsess";
         }
         private  void GetInformation()
@@ -176,6 +220,7 @@ namespace FileManager.ViewModel
                     $"Count Files: {ElementsOfDirectory.OfType<Folder>().Where(x => x.Name == _selectedItem.Name).First().CountOfFiles}";
 
             }
+
             if(_selectedItem != null && _selectedItem.Type == "File")
             {
                 InformationItem = $"Type: {_selectedItem.Type} \n" +
@@ -186,12 +231,21 @@ namespace FileManager.ViewModel
                     $"Last Write Time: {new FileInfo(_selectedItem.Path).LastWriteTime}";
             }
         }
+
         private async void BackFolder()
         {
             if (Directory.GetParent(_curretPath) != null)
+            {
                 _curretPath = Directory.GetParent(_curretPath).ToString();
-            await GetFilesAndFolder(_curretPath);
+                await GetFilesAndFolder(_curretPath);
+            }
+            else
+            {
+                _curretPath = null;
+                GetFilesAndFolder(_curretPath);
+            }
         }
+
 
 
         public event PropertyChangedEventHandler PropertyChanged;

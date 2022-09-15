@@ -6,7 +6,6 @@
         xmlns:local="clr-namespace:FileManager.View"
         xmlns:viewmodel="clr-namespace:FileManager.ViewModel" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        WindowStyle="None"
         Title="MainWindow" Height="450" Width="800">
     <Window.DataContext>
         <viewmodel:ManagerViewModel/>
@@ -22,19 +21,25 @@
             <ColumnDefinition Width="99*"/>
             <ColumnDefinition Width="101*"/>
         </Grid.ColumnDefinitions>
+
+
+
         <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal"
                     VerticalAlignment="Center">
 
             <Button  HorizontalAlignment="Left" Margin="10,0,0,0" Height="24" Width="24"  Command="{Binding BackCommand}">
-                <Button.Content >
-                    <Image Source="/Images/Back.png"></Image>
-                </Button.Content>
+                <Button.Template >
+                    <ControlTemplate>
+                        <Image Source="/Images/Back.png"></Image>
+                    </ControlTemplate>
+                </Button.Template>
             </Button>
-            <TextBlock Width="100" Height="24" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="50,0,0,0">
+
+            <TextBlock Width="100" Height="24" VerticalAlignment="Top" HorizontalAlignment="Left" Margin = "10 0 0 0">
                 <Border CornerRadius="10" Background="Bisque" BorderBrush="CadetBlue" BorderThickness="1" Margin="5 0 0 0">
                    <Grid>
-                       <TextBox VerticalContentAlignment="Center" Height="24" TextWrapping="Wrap" Background="Transparent" x:Name="SearchBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                BorderThickness="0" Foreground="Black" Margin="0,0,0,0" Text="{Binding SearchItem, UpdateSourceTrigger=PropertyChanged}"/>
+                       <TextBox VerticalContentAlignment="Center" Height="24" Width="150" TextWrapping="Wrap" Background="Transparent" x:Name="SearchBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                BorderThickness="0" Foreground="Black" Margin="5,0,0,0" Text="{Binding SearchItem, UpdateSourceTrigger=PropertyChanged}"/>
                        <TextBlock IsHitTestVisible="False"
                                        Text="Search"
                                        VerticalAlignment="Center"
@@ -53,11 +58,12 @@
                                 </Style>
                             </TextBlock.Style>
 
-                            </TextBlock>
+                       </TextBlock>
                    </Grid>
                 </Border>
             </TextBlock>
         </StackPanel>
+
         <ListView Grid.Column ="0" Grid.Row="1" ItemsSource="{Binding ElementsOfDirectory}" SelectedItem="{Binding SelectedItem}">
             <i:Interaction.Triggers>
 
@@ -70,24 +76,22 @@
 
             </i:Interaction.Triggers>
             <ListView.View>
-
                 <GridView >
-
-                    <GridViewColumn>
-
+                    
+                    <GridViewColumn Width="Auto">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Image Source="{Binding Path = Icon}" Height="24" Width="24" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path = Name}"></GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path = Size }"></GridViewColumn>
+                    
+                    <GridViewColumn DisplayMemberBinding="{Binding Path = Name}" Header="Name" Width="150"></GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path = Size}" Width="150"></GridViewColumn>
                 </GridView>
-
             </ListView.View>
-
         </ListView>
+
         <Label
             Grid.Column="1"
             Grid.Row="1"
@@ -103,13 +107,13 @@
                 </Style>
             </Label.Style>
         </Label>
+
         <Border
             Grid.Column="1"
-            Grid.Row="1"
-            Margin="10,10,10,10"
+            Margin="10,47,10,0"
             BorderBrush="#1B4079"
             BorderThickness="1"
-            CornerRadius="10">
+            CornerRadius="10" Grid.RowSpan="2">
 
             <TextBlock 
                     Text="{Binding InformationItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

@@ -24,7 +24,7 @@ namespace FileManager.ViewModel.Services
                 }
                 catch (Exception ex)
                 {
-
+                    Console.Write("can't read file: " + ex.Message);
                 }
                 List<DirectoryInfo> directories = d.GetDirectories().ToList();
                 directories.ForEach(async x => size += await GetSize(x));
