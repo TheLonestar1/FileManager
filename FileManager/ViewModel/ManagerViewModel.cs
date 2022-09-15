@@ -110,7 +110,6 @@ namespace FileManager.ViewModel
                 var ListElements = ElementsOfDirectory.Where(x => x.Name.ToLower().Contains(searchItem)).ToList();
                 ElementsOfDirectory.Clear();
                 ListElements.ForEach(x => ElementsOfDirectory.Add(x));
-
             }
         }
 
@@ -124,7 +123,7 @@ namespace FileManager.ViewModel
                                                                          Path = x.Name,
                                                                          Name = x.Name,
                                                                          Type = "Disk"
-            }));
+                                                                    }));
 
 
         }
@@ -234,7 +233,7 @@ namespace FileManager.ViewModel
 
         private async void BackFolder()
         {
-            if (Directory.GetParent(_curretPath) != null)
+            if (!string.IsNullOrEmpty(_curretPath) && Directory.GetParent(_curretPath) != null)
             {
                 _curretPath = Directory.GetParent(_curretPath).ToString();
                 await GetFilesAndFolder(_curretPath);
